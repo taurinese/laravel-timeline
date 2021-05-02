@@ -14,7 +14,7 @@ class Posts extends Component
 
     use WithPagination;
     
-    protected $listeners = ["echo:posts,PostAdded" => "postAdded", "likeAdded"];
+    protected $listeners = ["echo:posts,PostAdded" => "postAdded", "echo:likes,PostLiked" =>"likeAdded"];
 
     protected $paginationTheme = 'bootstrap';
 
@@ -30,6 +30,7 @@ class Posts extends Component
 
     public function likeAdded($postId)
     {
+        $postId = $postId['id'];
         if(!Like::where('post_id', $postId)->where('user_id', Auth::id())->exists()){
             DB::table('likes')->insert([
                 'user_id' => Auth::id(),
@@ -40,6 +41,9 @@ class Posts extends Component
             $currentLike = Like::where('post_id', $postId)->where('user_id', Auth::id())->first();
             $currentLike->delete();
         }
+
+        $post = Post::where('id', $postId);
+        $post->countLikes = Like::where('post_id', $postId)->count();
         
     }
 
