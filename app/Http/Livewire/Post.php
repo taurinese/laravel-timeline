@@ -21,7 +21,10 @@ class Post extends Component
     }
 
     public function likePost($postId){
-        $this->isLiked = true;
+        if($this->isLiked == false)
+            $this->isLiked = true;
+        else
+            $this->isLiked = false;
         $this->emit('likeAdded', $postId);
     }
 

@@ -30,10 +30,17 @@ class Posts extends Component
 
     public function likeAdded($postId)
     {
-        DB::table('likes')->insert([
-            'user_id' => Auth::id(),
-            'post_id' => $postId
-        ]);
+        if(!Like::where('post_id', $postId)->where('user_id', Auth::id())->exists()){
+            DB::table('likes')->insert([
+                'user_id' => Auth::id(),
+                'post_id' => $postId
+            ]);
+        }
+        else{
+            $currentLike = Like::where('post_id', $postId)->where('user_id', Auth::id())->first();
+            $currentLike->delete();
+        }
+        
     }
 
     /* public function mount()
